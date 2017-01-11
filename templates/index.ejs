@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+  <head>
+    <title>UIT Chat</title>
+
+    <!-- JQUERY -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    <!-- BOOTSTRAP -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/js/bootstrap-modal.min.js"></script>
+
+    <!-- Our CSS -->
+    <link rel='stylesheet' type='text/css' href='css/style.css'>
+  </head>
+  <body>
+    <div id="messages-login-window">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-12">
+            <h1>Login</h1>
+            <p>Please enter your name:</p>
+          </div>
+          <div class="col-sm-6 col-sm-offset-3">
+            <input type="text" id="login-name" class="form-control" val="">
+            <br>
+          </div>
+          <div class="col-sm-4 col-sm-offset-4">
+            <button id="login" class="btn btn-block btn-success">Go!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="messages-dashboard-window" style="display:none">
+
+      <div id="page-content-wrapper">
+
+        <div class="container-fluid">
+          <div class="row">
+
+            <!-- Message Window -->
+            <div class="col-md-12 message-window">
+
+              <!-- Messages Title Window -->
+              <div class="messages-title">
+                <h1 id="current-channel-title">Welcome to the Chat App!</h1>
+                <p id="current-channel-purpose" class="channel-purpose">This may be a very good place to put some dynamic text!</p>
+              </div>
+
+              <!-- Incoming Messages Window -->
+              <div class="messages-window">
+                <div id='messages-list' class="messages"></div>
+              </div>
+
+              <!-- New Message Input Window -->
+              <div class="new-message-window">
+                <input type='text' id='new-message-input' class="form-control input-lg" placeholder='Message'>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+
+      // @TODO: add your client-side socket listeners here!  Once again, there is a great video on this
+
+      $(document).ready(function() {
+        /*  Messaging Events */
+        $('#new-message-input').keypress(function (e) {
+          if (e.keyCode == 13) {
+
+            if ($("#new-message-input").val() != '') {
+              
+              // @TODO: might be a good idea to add your 'send message' code here...
+
+              $("#new-message-input").val("");
+            }
+          }
+        });
+
+        $("#login").click(function() {
+          if ($("#login-name").val() != "") {
+            
+            // @TODO: might be a good idea to add your 'add username' code here...
+
+            $("#messages-login-window").hide();
+            $("#messages-dashboard-window").show();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
