@@ -5,9 +5,7 @@ var io = require('socket.io')(http);
 var path = require('path');
 var bodyParser = require('body-parser');
 
-// your default messages and users array: this is where you'll store your messages and users
 var messages = [];
-var users = [];
 
 // set up to accept json as parameters
 app.use(bodyParser.json());
@@ -32,7 +30,6 @@ io.on('connection', function(socket) {
 
   socket.on('new user', function(user) {
     myUser = user;
-    users.push(user);
     // new user logged in, send all msgs to the new user
     socket.emit('load messages', messages);
 
