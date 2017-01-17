@@ -27,6 +27,7 @@
             <br>
           </div>
           <div class="col-sm-4 col-sm-offset-4">
+            <button id="random-username-btn" class="btn btn-block">Gimme a random username</button>
             <button id="login" class="btn btn-block btn-success">Go!</button>
           </div>
         </div>
@@ -44,8 +45,8 @@
 
               <!-- Messages Title Window -->
               <div class="messages-title">
-                <h1 id="current-channel-title">Welcome to the Chat App!</h1>
-                <p id="current-channel-purpose" class="channel-purpose">This may be a very good place to put some dynamic text!</p>
+                <h1 id="current-channel-title">Welcome to the Andrew's Chat App!</h1>
+                <p id="current-channel-purpose" class="channel-purpose">This IS a very good place to put dynamic text!</p>
               </div>
 
               <!-- Incoming Messages Window -->
@@ -66,32 +67,75 @@
     <script>
       var socket = io();
 
-      // @TODO: add your client-side socket listeners here!  Once again, there is a great video on this
-
       $(document).ready(function() {
-        /*  Messaging Events */
-        $('#new-message-input').keypress(function (e) {
-          if (e.keyCode == 13) {
+        socket.on('connect', function() {
+          
+        });
 
+        socket.on('load messages', function(messages) {
+          // clear previous messages (if there are any)
+          $('#messages-list').empty();
+
+          // add each message
+          for (var i = 0; i < messages.length; i++) {
+            addNewMessage(messages[i]);
+          }
+        });
+
+        socket.on('new message', addNewMessage);
+
+        /*  Messaging Events */
+        $('#new-message-input').keypress(function(e) {
+          var message;
+
+          if (e.keyCode == 13) {
             if ($("#new-message-input").val() != '') {
+              message = {
+                body: $('#new-message-input').val()
+              };
+
+              addNewMessage(message);
               
-              // @TODO: might be a good idea to add your 'send message' code here...
+              socket.emit('send message', message);
 
               $("#new-message-input").val("");
             }
           }
         });
 
+        $('#random-username-btn').click(function() {
+          $.ajax({
+            url: 'https://randomuser.me/api/',
+            dataType: 'json',
+            success: function(data) {
+              $('#login-name').val(data.results[0].login.username);
+            }
+          });
+        });
+
         $("#login").click(function() {
           if ($("#login-name").val() != "") {
-            
-            // @TODO: might be a good idea to add your 'add username' code here...
 
-            $("#messages-login-window").hide();
-            $("#messages-dashboard-window").show();
+            loginWithUsername($('#login-name').val());
           }
         });
       });
+
+      function loginWithUsername(username) {
+          socket.emit('new user', {name: username});
+          
+          $("#messages-login-window").hide();
+          $("#messages-dashboard-window").show();
+      }
+
+      function addNewMessage(message) {
+        $('#messages-list').append(
+          $('<p>').append(
+            $('<strong>').append((message.senderName || 'You') + ': ')
+          )
+          .append(message.body)
+        );
+      }
     </script>
   </body>
 </html>

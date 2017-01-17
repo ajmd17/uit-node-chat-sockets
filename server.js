@@ -23,19 +23,35 @@ app.use('/css', express.static(path.join(__dirname, 'public/css')));
 
 // routes via express
 app.get('/', function(req, res) {
-
-	// @TODO: add your ejs rendering code here! Remember, this has been done many times
-	//		  before by many other people, so Google is your friend!
+  res.render('index');
 });
 
-
 // socket.io functionality
-io.on('connection', function(socket){
-  console.log('Socket user connected!');
+io.on('connection', function(socket) {
+  var myUser = null;
 
-  // @TODO: set up your send message, show messages and add username functions.
-  //		Remember, there is a video on all of this stuff that we watched!
+  socket.on('new user', function(user) {
+    myUser = user;
+    users.push(user);
+    // new user logged in, send all msgs to the new user
+    socket.emit('load messages', messages);
 
+    console.log('Client "' + myUser.name + '" connected.');
+  });
+
+  socket.on('send message', function(message) {
+    if (myUser !== null) {
+      message.senderName = myUser.name;
+      socket.broadcast.emit('new message', message);
+      messages.push(message);
+    }
+  });
+
+  socket.on('disconnect', function() {
+    if (myUser !== null) {
+      console.log('Client "' + myUser.name + '" disconnected.');
+    }
+  });
 });
 
 http.listen(8080);
